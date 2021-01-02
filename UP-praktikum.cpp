@@ -5,7 +5,7 @@ using namespace std;
 int main()
 {
     const int array_size = 100;
-    int counter_for_spec_char = 0, position_spec_char = -1, k = 0, counter_reps_char_before_spec_char = 0;
+    int counter_for_spec_char = 0, position_spec_char = -1, k = 0, counter_reps_char_before_spec_char = 0; // k is iterator for later
     bool possible_coincidence = true, is_line_printed = false;
     char* massage, * regex, * row, * new_regex, spec_char, char_before_spec_char;
     massage = new char[array_size];
@@ -14,18 +14,18 @@ int main()
     row = new char[array_size];
     cin.getline(massage, array_size);
     cin.getline(regex, array_size);
-    if (regex[0] == '*' || regex[0] == '?' || regex[0] == '+')
+    if (regex[0] == '*' || regex[0] == '?' || regex[0] == '+') // for cases when regex begin with spec char from 3-5
     {
         return -1;
     }
-    for (int i = 1; i < strlen(regex); i++)
+    for (int i = 1; i < strlen(regex); i++) // for cases when regex have '^' on illegal position
     {
         if (regex[i] == '^' && regex[i - 1] != '\\')
         {
             return -1;
         }
     }
-    for (int i = 0; i < strlen(regex); i++)
+    for (int i = 0; i < strlen(regex); i++) // Check whether there is something else illegal in the regex
     {
         if (regex[i] == '\\')
         {
@@ -33,7 +33,7 @@ int main()
             {
                 return -1;
             }
-            while (regex[k] != '\\')
+            while (regex[k] != '\\') // here I remove '\' from the regex
             {
                 new_regex[k] = regex[k];
                 k++;
@@ -51,9 +51,9 @@ int main()
             }
             regex[strlen(new_regex)] = '\0';
         }
-        else if (regex[i] == '.' || regex[i] == '*' || regex[i] == '?' || regex[i] == '+')
-        {
-            if (regex[i] == '*')
+        else if (regex[i] == '.' || regex[i] == '*' || regex[i] == '?' || regex[i] == '+') 
+        {	
+            if (regex[i] == '*') 
             {
                 position_spec_char = i;
                 spec_char = regex[i];
@@ -73,10 +73,11 @@ int main()
             {
                 counter_for_spec_char--;
             }
-            if (counter_for_spec_char > 1)
+            if (counter_for_spec_char > 1) // check whether there is two special chars form 3-5 in regex
             {
                 return -1;
             }
+	    // check whether there is two adjacent special chars form 2-5 in regex
             else if (regex[i + 1] == '.' || regex[i + 1] == '*' || regex[i + 1] == '?' || regex[i + 1] == '+')
             {
                 return -1;
@@ -96,11 +97,11 @@ int main()
             is_line_printed = false;
             counter_reps_char_before_spec_char = 0;
             file.getline(row, array_size);
-            if (regex[0] == '^' && regex[1] == '\0')
+            if (regex[0] == '^' && regex[1] == '\0') // if regex is '^'
             {
                 cout << row << endl;
             }
-            else if (regex[0] == '^' && regex[1] != '\0')
+            else if (regex[0] == '^' && regex[1] != '\0') //if regex is from type '^abcd'
             {
                 for (int j = 1; j < strlen(regex); j++)
                 {
@@ -124,7 +125,7 @@ int main()
                     possible_coincidence = true;
                 }
             }
-            else if (position_spec_char == -1)
+            else if (position_spec_char == -1) //if regex is from type 'abcd' 
             {
                 for (int i = 0; i < strlen(row) - strlen(regex) + 1; i++)
                 {
@@ -151,7 +152,7 @@ int main()
                     }
                 }
             }
-            else if (position_spec_char == 1)
+            else if (position_spec_char == 1) //if regex is from type 'ab?cd', 'ab*cd', 'ab+cd'
             {
                 for (int i = 0; i < strlen(row) - position_spec_char + 2; i++)
                 {
