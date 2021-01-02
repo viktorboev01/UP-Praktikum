@@ -4,8 +4,8 @@ using namespace std;
 
 int main()
 {
-    const int array_size = 101;
-    int counter_for_spec_char = 0, position_spec_char = -1, k = 0, id_spec_char = 0, counter_dots = 0, counter_reps_char_before_spec_char = 0;
+    const int array_size = 100;
+    int counter_for_spec_char = 0, position_spec_char = -1, k = 0, counter_reps_char_before_spec_char = 0;
     bool possible_coincidence = true, is_line_printed = false;
     char* massage, * regex, * row, * new_regex, spec_char, char_before_spec_char;
     massage = new char[array_size];
@@ -14,6 +14,10 @@ int main()
     row = new char[array_size];
     cin.getline(massage, array_size);
     cin.getline(regex, array_size);
+    if (regex[0] == '*' || regex[0] == '?' || regex[0] == '+')
+    {
+        return -1;
+    }
     for (int i = 1; i < strlen(regex); i++)
     {
         if (regex[i] == '^' && regex[i - 1] != '\\')
@@ -53,23 +57,16 @@ int main()
             {
                 position_spec_char = i;
                 spec_char = regex[i];
-                cout << spec_char;
-                char_before_spec_char = regex[i - 1];
             }
             if (regex[i] == '+')
             {
                 position_spec_char = i;
                 spec_char = regex[i];
-                cout << spec_char;
-                char_before_spec_char = regex[i - 1];
             }
             if (regex[i] == '?')
             {
                 position_spec_char = i;
-                cout << position_spec_char << endl;
                 spec_char = regex[i];
-                cout << spec_char << endl;
-                char_before_spec_char = regex[i - 1];
             }
             counter_for_spec_char++;
             if (regex[i] == '.')
@@ -103,6 +100,30 @@ int main()
             {
                 cout << row << endl;
             }
+            else if (regex[0] == '^' && regex[1] != '\0')
+            {
+                for (int j = 1; j < strlen(regex); j++)
+                {
+                    if (row[j - 1] != regex[j])
+                    {
+                        if (regex[j] == '.')
+                        {
+                            continue;
+                        }
+                        possible_coincidence = false;
+                        break;
+                    }
+                }
+                if (possible_coincidence == true)
+                {
+                    cout << row << endl;
+                    break;
+                }
+                else
+                {
+                    possible_coincidence = true;
+                }
+            }
             else if (position_spec_char == -1)
             {
                 for (int i = 0; i < strlen(row) - strlen(regex) + 1; i++)
@@ -130,7 +151,50 @@ int main()
                     }
                 }
             }
-            else 
+            else if (position_spec_char == 1)
+            {
+                for (int i = 0; i < strlen(row) - position_spec_char + 2; i++)
+                {
+                    if (row[i] == regex[2])
+                    {
+                        while (regex[position_spec_char - 1] == row[i - counter_reps_char_before_spec_char - 1])
+                        {
+                            counter_reps_char_before_spec_char++;
+                        }
+                        int j = 0;
+                        while (j + 2 != strlen(regex))
+                        {
+                            if (row[i + j] != regex[2 + j])
+                            {
+                                break;
+                            }
+                            j++;
+                        }
+                        if (j + 2 == strlen(regex))
+                        {
+                            if (spec_char == '*')
+                            {
+                                is_line_printed = true;
+                            }
+                            if (spec_char == '?' && counter_reps_char_before_spec_char < 2)
+                            {
+                                is_line_printed = true;
+                            }
+                            if (spec_char == '+' && counter_reps_char_before_spec_char > 0)
+                            {
+                                is_line_printed = true;
+                            }
+                        }
+                    }
+                    if (is_line_printed == true)
+                    {
+                        cout << row << endl;
+                        is_line_printed = false;
+                        break;
+                    }
+                }
+            }
+            else
             {
                 for (int i = 0; i < strlen(row) - position_spec_char + 2; i++)
                 {
@@ -161,7 +225,6 @@ int main()
                             }
                             if (j - i + 2 == strlen(regex))
                             {
-                                cout << "third step completed" << endl;
                                 if (spec_char == '*')
                                 {
                                     is_line_printed = true;
