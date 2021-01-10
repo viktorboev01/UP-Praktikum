@@ -1,5 +1,5 @@
 /**
-*  
+*
 * Solution to course project # 7
 * Introduction to programming course
 * Faculty of Mathematics and Informatics of Sofia University
@@ -206,10 +206,15 @@ bool coinc_with_spec_char_beginning(char* row, char* regex, bool is_there_arrow,
                 counter_reps_char_before_spec_char++;
             }
             int j = 0;
-            while (row[i + j + 1] == regex[j + 3] || is_there_dot_spec(2 + j, pos_spec_dots) == true)
+            while (row[i + j + 1] == regex[j + 3] || is_there_dot_spec(3 + j, pos_spec_dots) == true)
             {
                 j++;
+                if (row[i + j + 1] == '\0')
+                {
+                    break;
+                }
             }
+            cout << j << endl;
             if (j + 3 == strlen(regex))
             {
                 if (what_is_spec_char(regex, 1) == '*')
@@ -242,6 +247,7 @@ bool coinc_with_spec_char_not_beginning(char* row, char* regex, bool is_there_ar
         return false;
     }
     int counter_reps_char_before_spec_char = 0;
+    int spec_counter = 0;
     for (int i = 0; i < strlen(row) - where_is_spec_char(regex) + 2; i++)
     {
         if (is_there_arrow == true)
@@ -268,9 +274,10 @@ bool coinc_with_spec_char_not_beginning(char* row, char* regex, bool is_there_ar
                 {
                     counter_reps_char_before_spec_char++;
                 }
-                if (regex[place_spec_char - 1] == regex[place_spec_char + 1]) // for cases comp*p
+                while (regex[place_spec_char - 1] == regex[place_spec_char + 1 + spec_counter]) // for cases abcd*d
                 {
                     counter_reps_char_before_spec_char--;
+                    spec_counter++;
                 }
                 while (j - i + 2 != strlen(regex))
                 {
@@ -286,7 +293,7 @@ bool coinc_with_spec_char_not_beginning(char* row, char* regex, bool is_there_ar
                     {
                         return true;
                     }
-                    if (what_is_spec_char(regex, place_spec_char) == '?' && counter_reps_char_before_spec_char < 2)
+                    if (what_is_spec_char(regex, place_spec_char) == '?' && (counter_reps_char_before_spec_char < 2 || i == 0))
                     {
                         return true;
                     }
@@ -303,7 +310,7 @@ bool coinc_with_spec_char_not_beginning(char* row, char* regex, bool is_there_ar
 
 int main()
 {
-    const int array_size = 500;
+    const int array_size = 5000;
     int* pos_spec_dots;
     pos_spec_dots = new int[array_size];
     bool is_there_arrow = false;
@@ -375,5 +382,3 @@ int main()
     delete[] pos_spec_dots;
     return 0;
 }
-
-
