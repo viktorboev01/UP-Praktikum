@@ -65,13 +65,18 @@ char* remove_arrow(char* regex)
 }
 int where_is_spec_char(char* regex)
 {
+    int counter_dashes = 0;
     for (int i = 1; i < strlen(regex); i++)
     {
-        if (regex[i - 1] != '\\')
+        if (regex[i - 1] == '\\')
+        {
+            counter_dashes++;
+        }
+        else
         {
             if (regex[i] == '*' || regex[i] == '?' || regex[i] == '+')
             {
-                return i;
+                return i - counter_dashes;
             }
         }
     }
@@ -228,7 +233,7 @@ bool coinc_with_spec_char_beginning(char* row, char* regex, bool is_there_arrow,
     }
     return false;
 }
-bool coinc_with_spec_char_not_beginning(char* row, char* regex, bool is_there_arrow, int* pos_spec_dots)
+bool coinc_with_spec_char_not_beginning(char* row, char* regex, bool is_there_arrow, int* pos_spec_dots, int place_spec_char)
 {
     int a = strlen(regex); 
     int b = strlen(row);
@@ -249,7 +254,7 @@ bool coinc_with_spec_char_not_beginning(char* row, char* regex, bool is_there_ar
         if (row[i] == regex[0])
         {
             int j = i;
-            while (j != where_is_spec_char(regex) - 1 + i)
+            while (j != place_spec_char - 1 + i)
             {
                 if (row[j] != regex[j - i] && is_there_dot_spec(j - i, pos_spec_dots) == false)
                 { 
@@ -257,13 +262,13 @@ bool coinc_with_spec_char_not_beginning(char* row, char* regex, bool is_there_ar
                 }
                 j++;
             }
-            if (j - i == where_is_spec_char(regex) - 1)
+            if (j - i == place_spec_char - 1)
             {
-                while (regex[where_is_spec_char(regex) - 1] == row[j + counter_reps_char_before_spec_char])
+                while (regex[place_spec_char - 1] == row[j + counter_reps_char_before_spec_char])
                 {
                     counter_reps_char_before_spec_char++;
                 }
-                if (regex[where_is_spec_char(regex) - 1] == regex[where_is_spec_char(regex) + 1]) // for cases comp*p
+                if (regex[place_spec_char - 1] == regex[place_spec_char + 1]) // for cases comp*p
                 {
                     counter_reps_char_before_spec_char--;
                 }
@@ -277,15 +282,15 @@ bool coinc_with_spec_char_not_beginning(char* row, char* regex, bool is_there_ar
                 }
                 if (j - i + 2 == strlen(regex))
                 {
-                    if (what_is_spec_char(regex, where_is_spec_char(regex)) == '*')
+                    if (what_is_spec_char(regex, place_spec_char) == '*')
                     {
                         return true;
                     }
-                    if (what_is_spec_char(regex, where_is_spec_char(regex)) == '?' && counter_reps_char_before_spec_char < 2)
+                    if (what_is_spec_char(regex, place_spec_char) == '?' && counter_reps_char_before_spec_char < 2)
                     {
                         return true;
                     }
-                    if (what_is_spec_char(regex, where_is_spec_char(regex)) == '+' && counter_reps_char_before_spec_char > 0)
+                    if (what_is_spec_char(regex, place_spec_char) == '+' && counter_reps_char_before_spec_char > 0)
                     {
                         return true;
                     }
@@ -298,7 +303,7 @@ bool coinc_with_spec_char_not_beginning(char* row, char* regex, bool is_there_ar
 
 int main()
 {
-    const int array_size = 5000;
+    const int array_size = 500;
     int* pos_spec_dots;
     pos_spec_dots = new int[array_size];
     bool is_there_arrow = false;
@@ -349,7 +354,7 @@ int main()
                 }
                 else //if regex is from type 'ab?cd', 'ab*cd', 'ab+cd'
                 {
-                    if (coinc_with_spec_char_not_beginning(row, regex, is_there_arrow, pos_spec_dots) == true)
+                    if (coinc_with_spec_char_not_beginning(row, regex, is_there_arrow, pos_spec_dots, place_spec_char) == true)
                     {
                         cout << row << endl;
                         continue;
@@ -370,4 +375,5 @@ int main()
     delete[] pos_spec_dots;
     return 0;
 }
+
 
