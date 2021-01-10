@@ -1,3 +1,18 @@
+/**
+*  
+* Solution to course project # 7
+* Introduction to programming course
+* Faculty of Mathematics and Informatics of Sofia University
+* Winter semester 2020/2021
+*
+* @author Viktor Boev
+* @idnumber 62564
+* @compiler VC
+*
+* <main file>
+*
+*/
+
 #include <iostream>
 #include <fstream>
 #include <cstring>
