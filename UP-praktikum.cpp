@@ -214,7 +214,6 @@ bool coinc_with_spec_char_beginning(char* row, char* regex, bool is_there_arrow,
                     break;
                 }
             }
-            cout << j << endl;
             if (j + 3 == strlen(regex))
             {
                 if (what_is_spec_char(regex, 1) == '*')
