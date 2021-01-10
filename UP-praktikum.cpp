@@ -196,16 +196,16 @@ bool coinc_with_spec_char_beginning(char* row, char* regex, bool is_there_arrow,
         }
         if (row[i] == regex[2])
         {
-            while (regex[0] == row[i - counter_reps_char_before_spec_char - 1])
+            while (regex[0] == row[i - counter_reps_char_before_spec_char - 1] && i - counter_reps_char_before_spec_char - 1 >= 0)
             {
                 counter_reps_char_before_spec_char++;
             }
             int j = 0;
-            while (row[i + j + counter_reps_char_before_spec_char] == regex[2 + j] || is_there_dot_spec(2 + j, pos_spec_dots) == true)
+            while (row[i + j + 1] == regex[j + 3] || is_there_dot_spec(2 + j, pos_spec_dots) == true)
             {
                 j++;
             }
-            if (j + 2 == strlen(regex))
+            if (j + 3 == strlen(regex))
             {
                 if (what_is_spec_char(regex, 1) == '*')
                 {
@@ -271,7 +271,6 @@ bool coinc_with_spec_char_not_beginning(char* row, char* regex, bool is_there_ar
                 {
                     if (row[counter_reps_char_before_spec_char + j] != regex[j - i + 2] && is_there_dot_spec(j - i + 2, pos_spec_dots) == false)
                     {
-                        cout << is_there_dot_spec(j - i + 2, pos_spec_dots);
                         break;
                     }
                     j++;
@@ -371,3 +370,4 @@ int main()
     delete[] pos_spec_dots;
     return 0;
 }
+
